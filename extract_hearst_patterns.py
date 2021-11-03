@@ -46,6 +46,5 @@ for doc in nlp.pipe(transcripts, n_process=4):
     doc: Doc
     matches = matcher(doc)
     for match_id, start, end in matches:
-        string_id = nlp.vocab.strings[match_id]  # Get string representation
-        span = doc[start:end]  # The matched span
+        span = doc[start:end]
         print(span.text)
