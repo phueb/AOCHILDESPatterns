@@ -1,12 +1,11 @@
 import pandas as pd
-import numpy as np
 from typing import List
 
 from aochildespatterns import configs
 
 
 def save_summary_to_txt(x: List[int],
-                        y: np.array,
+                        y: List[float],
                         quantity_name: str,
                         ) -> None:
     """
@@ -24,7 +23,7 @@ def save_summary_to_txt(x: List[int],
         path.parent.mkdir()
 
     # save to text
-    df = pd.DataFrame(data={'mean': y}, index=x)
+    df = pd.DataFrame(data={'y': y}, index=x)
     df.index.name = 'x'
     df.round(3).to_csv(path, sep=' ')
 
