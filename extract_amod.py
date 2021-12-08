@@ -14,7 +14,7 @@ from aochildes.dataset import ChildesDataSet
 from aochildespatterns.utils import save_summary_to_txt
 from aochildespatterns.probes import probes
 
-NUM_PARTS = 2
+NUM_PARTS = 64
 PATTERN_NAME = 'amod+PROBE'
 VERBOSE = False
 
@@ -59,13 +59,16 @@ def gen_spans_by_partition(texts: List[str]) -> Generator[List[str], None, None]
 
 y1 = []
 y2 = []
+y3 = []
 part_id2amods = defaultdict(list)
 amod2spans = defaultdict(list)
 for part_id, spans_in_part in enumerate(gen_spans_by_partition(transcripts)):
     y1i = len(spans_in_part)
-    y2i = len(set(spans_in_part)) / len(spans_in_part)
+    y2i = len(set(spans_in_part))
+    y3i = len(set(spans_in_part)) / len(spans_in_part)
     y1.append(y1i)
     y2.append(y2i)
+    y3.append(y3i)
 
     print(f'Partition {part_id:>6,} | Found {y1i :>6,} {PATTERN_NAME} spans of which {y2i:>6,} are unique')
 
@@ -101,5 +104,10 @@ save_summary_to_txt(x=[i + 1 for i in range(len(y1))],
                     )
 save_summary_to_txt(x=[i + 1 for i in range(len(y2))],
                     y=y2,
+                    quantity_name=f'num_unique_of_{PATTERN_NAME}',
+                    )
+
+save_summary_to_txt(x=[i + 1 for i in range(len(y3))],
+                    y=y3,
                     quantity_name=f'percent_unique_of_{PATTERN_NAME}',
                     )
