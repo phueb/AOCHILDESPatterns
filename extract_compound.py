@@ -1,5 +1,5 @@
 """
-Find all spans in AO-CHILDES where a probe is preceded by a token tagged by spacy as "amod".
+Find all spans in AO-CHILDES where a probe is preceded by a token tagged by spacy as "compound".
 
 Save results to a txt file for plotting in Latex
 
@@ -14,8 +14,8 @@ from aochildes.dataset import ChildesDataSet
 from aochildespatterns.utils import save_summary_to_txt
 from aochildespatterns.probes import probes
 
-NUM_PARTS = 64
-PATTERN_NAME = 'amod+target'
+NUM_PARTS = 2
+PATTERN_NAME = 'compound+target'
 VERBOSE = False
 
 transcripts_ = ChildesDataSet().load_transcripts()
@@ -27,7 +27,7 @@ nlp = spacy.load("en_core_web_sm", exclude=['ner'])
 
 matcher = Matcher(nlp.vocab)
 
-pattern = [{'DEP': 'amod', 'OP': "+"},  # adjectival modifier,
+pattern = [{'DEP': 'compound', 'OP': "+"},  # adjectival modifier,
            {"LEMMA": {"IN": probes}},
            ]
 
@@ -60,8 +60,8 @@ def gen_spans_by_partition(texts: List[str]) -> Generator[List[str], None, None]
 y1 = []
 y2 = []
 y3 = []
-part_id2amods = defaultdict(list)
-amod2spans = defaultdict(list)
+part_id2compounds = defaultdict(list)
+compound2spans = defaultdict(list)
 for part_id, spans_in_part in enumerate(gen_spans_by_partition(transcripts)):
     y1i = len(spans_in_part)
     y2i = len(set(spans_in_part))
@@ -72,30 +72,30 @@ for part_id, spans_in_part in enumerate(gen_spans_by_partition(transcripts)):
 
     print(f'Partition {part_id:>6,} | Found {y1i :>6,} {PATTERN_NAME} spans of which {y2i:>6,} are unique')
 
-    # collect all amods to see which become more frequent with age
+    # collect all compounds to see which become more frequent with age
     for span in spans_in_part:
-        amod = span.split()[-2]
-        part_id2amods[part_id].append(amod)
-        amod2spans[amod].append((part_id, span))
+        compound = span.split()[-2]
+        part_id2compounds[part_id].append(compound)
+        compound2spans[compound].append((part_id, span))
 
 
-# which amod has greatest percent increase from part 1 to part 2?
+# which compound has greatest percent increase from part 1 to part 2?
 if NUM_PARTS == 2:
-    c0 = Counter(part_id2amods[0])
-    c1 = Counter(part_id2amods[1])
+    c0 = Counter(part_id2compounds[0])
+    c1 = Counter(part_id2compounds[1])
 
-    amod2pi = {}
-    for amod in c1:
-        f0 = c0.get(amod, 1)  # pretend each amod in part 2 is seen at least once in part 1
-        f1 = c1[amod]
+    compound2pi = {}
+    for compound in c1:
+        f0 = c0.get(compound, 1)  # pretend each compound in part 2 is seen at least once in part 1
+        f1 = c1[compound]
         fd = f1 - f0
         percent_increase = fd / f0
-        print(f'{amod:<16} f0={f0:>6,} f1={f1:>6,} fd={fd:>6,} pi={percent_increase:.3f}')
-        amod2pi[amod] = percent_increase
+        print(f'{compound:<16} f0={f0:>6,} f1={f1:>6,} fd={fd:>6,} pi={percent_increase:.3f}')
+        compound2pi[compound] = percent_increase
 
-    for amod, pi in sorted(amod2pi.items(), key=lambda i: i[1])[-10:]:
-        print(f'{amod:<16} pi={pi:.4f}')
-        print(amod2spans[amod])
+    for compound, pi in sorted(compound2pi.items(), key=lambda i: i[1])[-10:]:
+        print(f'{compound:<16} pi={pi:.4f}')
+        print(compound2spans[compound])
 
 # summaries
 save_summary_to_txt(x=[i + 1 for i in range(len(y1))],
