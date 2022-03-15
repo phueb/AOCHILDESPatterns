@@ -5,6 +5,7 @@ Save results to a txt file for plotting in Latex
 
 """
 import spacy
+import numpy as np
 from spacy.tokens import Doc
 from spacy.matcher import Matcher
 from typing import List, Generator
@@ -28,7 +29,7 @@ nlp = spacy.load("en_core_web_sm", exclude=['ner'])
 matcher = Matcher(nlp.vocab)
 
 pattern = [{'DEP': 'compound', 'OP': "+"},  # adjectival modifier,
-           {"LEMMA": {"IN": probes}},
+           {"TEXT": {"IN": probes}},
            ]
 
 matcher.add(PATTERN_NAME,
@@ -111,3 +112,27 @@ save_summary_to_txt(x=[i + 1 for i in range(len(y3))],
                     y=y3,
                     quantity_name=f'percent_unique_of_{PATTERN_NAME}',
                     )
+
+
+# make co-mat, one for each partition, then compute fragmentation for each
+for part_id in range(NUM_PARTS):
+
+    # init matrix
+    num_cols = len(compound2spans)
+    num_rows = len(probes)
+    co_mat = np.zeros((num_rows, num_cols))
+    left_contexts = list(compound2spans.keys())
+    # collect co-occurrences
+    for left_context, spans in compound2spans.items():
+        col_id = left_contexts.index(left_context)
+        for part_id_, span in spans:
+            if part_id_ == part_id:
+                probe = span.split()[-1]
+                row_id = probes.index(probe)
+                co_mat[row_id, col_id] += 1
+
+    # compute fragmentation
+    u, s, vt = np.linalg.svd(co_mat, compute_uv=True)
+    assert np.max(s) == s[0]
+    frag = 1 - (s[0] / np.sum(s))
+    print(f'partition={part_id:>4} frag = {frag}')
