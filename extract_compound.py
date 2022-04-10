@@ -11,7 +11,7 @@ from spacy.matcher import Matcher
 from typing import List, Generator
 from collections import defaultdict, Counter
 
-from aochildes.dataset import ChildesDataSet
+from aochildes.dataset import AOChildesDataSet
 from aochildespatterns.utils import save_summary_to_txt
 from aochildespatterns.probes import probes
 
@@ -19,7 +19,7 @@ NUM_PARTS = 2
 PATTERN_NAME = 'compound+target'
 VERBOSE = False
 
-transcripts_ = ChildesDataSet().load_transcripts()
+transcripts_ = AOChildesDataSet().load_transcripts()
 
 # make num transcripts divisible by NUM_PARTS
 transcripts = transcripts_

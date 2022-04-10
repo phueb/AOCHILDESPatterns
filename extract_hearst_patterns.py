@@ -2,10 +2,10 @@ import spacy
 from spacy.tokens import Doc
 from spacy.matcher import Matcher
 
-from aochildes.dataset import ChildesDataSet
+from aochildes.dataset import AOChildesDataSet
 
 
-transcripts = ChildesDataSet().load_transcripts()
+transcripts = AOChildesDataSet().load_transcripts()
 
 
 nlp = spacy.load("en_core_web_sm", exclude=['ner', 'parser'])
