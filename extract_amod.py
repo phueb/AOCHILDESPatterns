@@ -135,4 +135,4 @@ for part_id in range(NUM_PARTS):
     u, s, vt = np.linalg.svd(co_mat, compute_uv=True)
     assert np.max(s) == s[0]
     frag = 1 - (s[0] / np.sum(s))
-    print(f'partition={part_id:>4} frag = {frag}')
+    print(f'partition={part_id:>4} frag = {frag:.4f} matrix shape={co_mat.shape} sum={co_mat.sum().sum()}')
