@@ -1,11 +1,13 @@
 # AOCHILDESPatterns
 
+
+## About
+
 Research code for exploring and extracting linguistic patterns from the AO-CHILDES corpus,
  a collection of transcribed American-English speech to children.
  
-Tools to create a custom AO-CHILDES corpus are available [here](https://github.com/UIUCLearningLanguageLab/AOCHILDES). 
+The AO-CHILDES corpus is dynamically generated using the Python package [AOCHILDES](https://github.com/UIUCLearningLanguageLab/AOCHILDES). 
 
-## About
 
 ## Compatibility
 
